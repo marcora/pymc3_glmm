@@ -19,9 +19,11 @@ radon
 
 # Pooled/non-hierarchical model
 
-```{r warning=FALSE, message=FALSE}
+```{r warning=FALSE, message=FALSE, results="hide"}
 pooled_fit = brm(log.radon ~ floor, data = radon)
+```
 
+```{r}
 summary(pooled_fit)
 
 plot(pooled_fit, ask = FALSE)
@@ -31,9 +33,11 @@ pp_check(pooled_fit)
 
 # Hierarchical model
 
-```{r warning=FALSE, message=FALSE}
+```{r warning=FALSE, message=FALSE, results="hide"}
 hierarchical_fit = brm(log.radon ~ floor + (1 + floor | county), data = radon)
+```
 
+```{r}
 summary(hierarchical_fit)
 
 plot(hierarchical_fit, ask = FALSE)
