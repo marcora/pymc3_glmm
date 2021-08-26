@@ -24,7 +24,7 @@ pooled_fit = brm(log.radon ~ floor, data = radon)
 
 summary(pooled_fit)
 
-plot(pooled_fit)
+plot(pooled_fit, ask = FALSE)
 
 pp_check(pooled_fit)
 ```
@@ -36,7 +36,7 @@ hierarchical_fit = brm(log.radon ~ floor + (1 + floor | county), data = radon)
 
 summary(hierarchical_fit)
 
-plot(hierarchical_fit)
+plot(hierarchical_fit, ask = FALSE)
 
 pp_check(hierarchical_fit)
 ```
