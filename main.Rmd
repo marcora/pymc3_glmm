@@ -6,4 +6,44 @@ library(brms)
 options(brms.backend = "cmdstanr", mc.cores = 4)
 ```
 
+```{r}
+df = read_csv("http://www.stat.columbia.edu/~gelman/arm/examples/radon/srrs2.dat")
+
+radon = df %>%
+    filter(state == "MN") %>%
+    mutate(log.radon = log(ifelse(activity==0, .1, activity))) %>%
+select(log.radon, floor, county)
+
+radon
+```
+
+# Pooled/non-hierarchical model
+
+```{r}
+pooled_fit = brm(log.radon ~ floor, data = radon)
+
+summary(pooled_fit)
+
+plot(pooled_fit)
+
+pp_check(pooled_fit)
+```
+
+# Hierarchical model
+
+```{r}
+hierarchical_fit = brm(log.radon ~ floor + (1 + floor | county), data = radon)
+
+summary(hierarchical_fit)
+
+plot(hierarchical_fit)
+
+pp_check(hierarchical_fit)
+```
+
+# Model comparison
+
+```{r}
+loo(pooled_fit, hierarchical_fit)
+```
 
