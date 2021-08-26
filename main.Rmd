@@ -1,0 +1,9 @@
+```{r}
+library(tidyverse)
+library(magrittr)
+library(brms)
+
+options(brms.backend = "cmdstanr", mc.cores = 4)
+```
+
+
