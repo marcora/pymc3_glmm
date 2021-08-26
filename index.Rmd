@@ -1,4 +1,4 @@
-```{r}
+```{r warning=FALSE, message=FALSE}
 library(tidyverse)
 library(magrittr)
 library(brms)
@@ -12,14 +12,14 @@ df = read_csv("http://www.stat.columbia.edu/~gelman/arm/examples/radon/srrs2.dat
 radon = df %>%
     filter(state == "MN") %>%
     mutate(log.radon = log(ifelse(activity==0, .1, activity))) %>%
-select(log.radon, floor, county)
+    select(log.radon, floor, county)
 
 radon
 ```
 
 # Pooled/non-hierarchical model
 
-```{r}
+```{r warning=FALSE, message=FALSE}
 pooled_fit = brm(log.radon ~ floor, data = radon)
 
 summary(pooled_fit)
@@ -31,7 +31,7 @@ pp_check(pooled_fit)
 
 # Hierarchical model
 
-```{r}
+```{r warning=FALSE, message=FALSE}
 hierarchical_fit = brm(log.radon ~ floor + (1 + floor | county), data = radon)
 
 summary(hierarchical_fit)
