@@ -2,6 +2,8 @@
 library(tidyverse)
 library(magrittr)
 library(brms)
+library(lme4)
+library(lmerTest)
 
 options(brms.backend = "cmdstanr", mc.cores = 4)
 ```
@@ -20,34 +22,57 @@ radon
 # Pooled/non-hierarchical model
 
 ```{r warning=FALSE, message=FALSE, results="hide"}
-pooled_fit = brm(log.radon ~ floor, data = radon)
+pooled_fit.brm = brm(log.radon ~ floor, data = radon)
 ```
 
 ```{r}
-summary(pooled_fit)
+summary(pooled_fit.brm)
 
-plot(pooled_fit, ask = FALSE)
+plot(pooled_fit.brm, ask = FALSE)
 
-pp_check(pooled_fit)
+pp_check(pooled_fit.brm)
+```
+
+```{r warning=FALSE, message=FALSE, results="hide"}
+pooled_fit.lm = lm(log.radon ~ floor, data = radon)
+```
+
+```{r}
+summary(pooled_fit.lm)
+
+plot(pooled_fit.lm, ask = FALSE)
 ```
 
 # Hierarchical model
 
 ```{r warning=FALSE, message=FALSE, results="hide"}
-hierarchical_fit = brm(log.radon ~ floor + (1 + floor | county), data = radon)
+hierarchical_fit.brm = brm(log.radon ~ floor + (1 + floor | county), data = radon)
 ```
 
 ```{r}
-summary(hierarchical_fit)
+summary(hierarchical_fit.brm)
 
-plot(hierarchical_fit, ask = FALSE)
+plot(hierarchical_fit.brm, ask = FALSE)
 
-pp_check(hierarchical_fit)
+pp_check(hierarchical_fit.brm)
+```
+
+```{r warning=FALSE, message=FALSE, results="hide"}
+hierarchical_fit.lm = lmer(log.radon ~ floor + (1 + floor | county), data = radon)
+```
+
+```{r}
+summary(hierarchical_fit.lm)
+
+plot(hierarchical_fit.lm, ask = FALSE)
 ```
 
 # Model comparison
 
 ```{r}
-loo(pooled_fit, hierarchical_fit)
+loo(hierarchical_fit.brm, pooled_fit.brm)
 ```
 
+```{r}
+anova(hierarchical_fit.lm, pooled_fit.lm)
+```
