@@ -1,0 +1,78 @@
+---
+title: "Sleep study"
+output: html_notebook
+---
+
+```{r warning=FALSE, message=FALSE}
+library(tidyverse)
+library(brms)
+library(lme4)
+library(lmerTest)
+library(MASS)
+```
+
+```{r}
+str(sleepstudy)
+
+sleepstudy %>% as_tibble
+```
+
+```{r}
+fit = lmer(Reaction ~ 1 + Days + (1 + Days | Subject), data = sleepstudy)
+
+summary(fit)
+```
+
+```{r}
+plot(fit)
+```
+
+## Simulation of sleepstudy dataset
+
+
+```{r}
+set.seed(1969)
+
+nsubs = 18
+days = 0:9
+Reaction = c()
+Days = rep(days, nsubs)
+Subject = as.factor(rep(1:nsubs, each=length(days)))
+
+intercept.mu = 251
+intercept.sigma = 24
+
+slope.mu = 10
+slope.sigma = 10
+
+eps = 30
+
+for (i in 1:nsubs) {
+  m = mvrnorm(n = length(days), mu = c(intercept.mu, slope.mu), Sigma = matrix(c(intercept.sigma^2,0,0,slope.sigma^2), nrow=2))
+  intercepts = m[,1] # rnorm(length(days), mean = intercept.mu, sd = intercept.sigma)
+  slopes = m[,2] # rnorm(length(days), mean = slope.mu, sd = slope.sigma)
+  obs = intercepts + (slopes * days) + rnorm(length(days), mean = 0, sd = eps)
+  Reaction = c(Reaction, obs)
+}
+
+df = tibble(Reaction, Days, Subject)
+
+df
+
+df %>% ggplot(aes(x = Days, y = Reaction)) +
+  geom_point() +
+  stat_smooth(method = "lm", col = "red") +
+  facet_wrap(~ Subject)
+
+lm.fit = lm(Reaction ~ 1 + Days, data = df)
+lmer.fit = lmer(Reaction ~ 1 + Days + (1 + Days | Subject), data = df)
+
+anova(lmer.fit, lm.fit)
+```
+
+```{r}
+lm.fit = lm(Reaction ~ 1 + Days, data = sleepstudy)
+lmer.fit = lmer(Reaction ~ 1 + Days + (1 + Days | Subject), data = sleepstudy)
+
+anova(lmer.fit, lm.fit)
+```
