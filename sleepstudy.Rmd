@@ -5,10 +5,12 @@ output: html_notebook
 
 ```{r warning=FALSE, message=FALSE}
 library(tidyverse)
+library(magrittr)
 library(brms)
 library(lme4)
 library(lmerTest)
 library(MASS)
+library(flexplot) # dustinfife/flexplot
 ```
 
 ```{r}
